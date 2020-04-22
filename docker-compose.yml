@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  es.api:
+    image: ${DOCKER_REGISTRY-}esapi
+    build:
+      context: .
+      dockerfile: src/ES.API/Dockerfile
+    depends_on:
+        - raven
+  raven:
+    image: ravendb/ravendb
+    ports:
+     - 38888:38888
+     - 8080:8080
+    environment:
+      - RAVEN_Setup_Mode=None 
+      - RAVEN_License_Eula_Accepted=true 
+      - RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork
+  elk:
+    image: sebp/elk
+    ports:
+      - "5601:5601"
+      - "9200:9200"
+      - "5044:5044"
+    environment:
+      LOGSTASH_START: 0
